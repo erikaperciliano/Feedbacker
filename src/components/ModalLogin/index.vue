@@ -58,7 +58,7 @@
 import { reactive } from 'vue'
 import { useField } from 'vee-validate'
 import useModal from '../../hooks/useModal'
-import { validateEmptyAndLength3 } from '../../utils/validators'
+import { validateEmptyAndLength3, validateEmptyAndEmail } from '../../utils/validators'
 
 export default {
   setup () {
@@ -67,7 +67,7 @@ export default {
     const {
       value: emailValue,
       errorMessage: emailErrorMessage
-    } = useField('email')
+    } = useField('email', validateEmptyAndEmail)
 
     const {
       value: passwordValue,
