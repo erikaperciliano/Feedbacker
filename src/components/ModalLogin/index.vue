@@ -68,7 +68,7 @@ import { useToast } from 'vue-toastification'
 export default {
   components: { Icon },
   setup () {
-    const router = useRouter
+    const router = useRouter()
     const modal = useModal()
     const toast = useToast()
 
@@ -83,7 +83,7 @@ export default {
     } = useField('password', validateEmptyAndLength3)
 
     const state = reactive({
-      hasErros: false,
+      hasErrors: false,
       isLoading: false,
       email: {
         value: emailValue,
@@ -122,8 +122,9 @@ export default {
         }
         state.isLoading = false
       } catch (error) {
+        console.log('cai no catch', error)
         state.isLoading = false
-        state.hasErros = error
+        state.hasErrors = !!error
         toast.error('Ocorreu um erro ao fazer o login!')
       }
     }
