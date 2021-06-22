@@ -1,4 +1,4 @@
-import { reactive, reative } from 'vue'
+import { reactive } from 'vue'
 
 const state = reactive({
   isLoading: false
