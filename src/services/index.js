@@ -1,6 +1,6 @@
 import axios from 'axios'
 import router from '../router'
-import setGlobalLoading from '../store/global'
+import { setGlobalLoading } from '../store/global'
 import AuthService from './auth'
 import UsersService from './users'
 
