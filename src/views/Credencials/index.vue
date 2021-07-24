@@ -10,11 +10,80 @@
       Guia de instalação e geração de suas credenciais
     </p>
   </div>
+
+  <div class="flex justify-center w-full h-full">
+    <div class="flex flex-col w-4/5 max-w-6xl py-10">
+      <h1 class="text-3xl font-black tex-brand-darkgray">
+        Instalação e configuração
+      </h1>
+      <p class="mt-10 tex-lg tex-gray-800 font-regular">
+        Este aqui é a sua chave de api
+      </p>
+      <content-loader
+        v-if="store.Global.isLoading || state.isLoading"
+        class="rounded"
+        width="600px"
+        height="50px"
+      />
+      <div
+        v-else
+        class="flex py-3 pl-5 pr-20 mt-2 rounded justify-between items-center bg-brand-gray w-full lg:w-1/2">
+        <span>{{ store.User.currentUser.apiKey }}</span>
+        <div class="flex ml-20 mr-5">
+          <icon
+            name="copy"
+            color="{{brandColors.graydark}}"
+            size="24"
+            class="cursor-pointer"
+          />
+          <icon
+            name="loading"
+            color="{{brandColors.graydark}}"
+            size="24"
+            class="cursor-pointer ml-3"
+          />
+        </div>
+      </div>
+      <p class="mt-5 tex-lg tex-gray-800 font-regular">
+        Coloque o script abaixo no seu site para começar a receber feedbacks
+      </p>
+
+      <content-loader
+        v-if="store.Global.isLoading || state.isLoading"
+        class="rounded"
+        width="600px"
+        height="50px"
+      />
+      <div
+        v-else
+        class="py-3 pl-5 pr-20 mt-2 rounded bg-brand-gray w-full lg:w-2/3 overflow-x-scroll">
+        <pre>&lt;script src="https://erikaperciliano-feedbacker-widget.netlify.app?apiKey={{store.User.currentUser.apiKey}}&gt;&lt;/script&gt;"</pre>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 import HeaderLogged from '../../components/HeaderLogged'
+import Icon from '../../components/Icon'
+import useStore from '../../hooks/useStore'
+import palette from '../../../palette'
+import ContentLoader from '../../components/ContentLoader'
+import { reactive } from 'vue'
 
 export default {
-  components: { HeaderLogged }
+  components: { HeaderLogged, Icon, ContentLoader },
+
+  setup () {
+    const store = useStore()
+    const state = reactive({
+      isLoading: false
+    })
+
+    return {
+      state,
+      store,
+      brandColors: palette.brand
+    }
+  }
 }
 </script>
