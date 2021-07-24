@@ -31,7 +31,7 @@
 <script>
 import { computed } from '@vue/runtime-core'
 import { useRouter } from 'vue-router'
-import useStore from '../../hooks/userStore'
+import useStore from '../../hooks/useStore'
 import { cleanCurrentUser } from '../../store/user'
 
 export default {
@@ -40,7 +40,7 @@ export default {
     const store = useStore('User')
 
     const logoutLabel = computed(() => {
-      if (!store.currentUser) {
+      if (!store.currentUser.name) {
         return '...'
       }
       return `${store.currentUser.name} (sair)`
