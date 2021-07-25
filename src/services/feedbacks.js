@@ -1,12 +1,12 @@
-const fefaultPagination = {
+const defaultPagination = {
   limit: 5,
   offset: 0
 }
 
 export default httpClient => ({
-  getAll: async ({ type, limit, offset } =  defaultPagination) => {
+  getAll: async ({ type, limit, offset } = defaultPagination) => {
     const query = { limit, offset }
-    if(type) {
+    if (type) {
       query.type = type
     }
     const response = await httpClient.get('/feedbacks', { params: query })
