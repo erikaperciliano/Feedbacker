@@ -18,7 +18,10 @@
         </h1>
         <suspense>
           <template #default>
-            <filters class="mt-8 animate__animated animate__fadeIn animate__faster"/>
+            <filters
+            @select="changeFeedbacksType"
+              class="mt-8 animate__animated animate__fadeIn animate__faster"
+            />
           </template>
           <template #fallback>
             <filters-loading class="mt-8"/>
@@ -26,7 +29,6 @@
         </suspense>
       </div>
       <div class="px-10 pt-20 col-span-3">
-      <h1>Aquiiiii: {{ state.feedbacks}}</h1>
         <p
           v-if="state.hasError"
           class="text-lg text-center text-gray-800 front-regular"
@@ -40,7 +42,7 @@
           Ainda nenhum feedbacks recebido🤓
         </p>
 
-        <feedback-card-loading v-if="state.isLoading"/>
+        <feedback-card-loading v-if="state.isLoading || isLoadingFeedbacks"/>
         <feedback-card
           v-else
           v-for="(feedback, index) in state.feedbacks"
@@ -54,7 +56,7 @@
   </div>
 </template>
 <script>
-import { onMounted, reactive } from 'vue'
+import { onMounted, onUnmounted, reactive } from 'vue'
 import HeaderLogged from '../../components/HeaderLogged'
 import Filters from './Filters'
 import FiltersLoading from './FiltersLoading'
@@ -73,7 +75,9 @@ export default {
 
   setup () {
     const state = reactive({
+      isLoadingFeedbacks: false,
       isLoading: false,
+      isLoadingMoreFeedback: false,
       feedbacks: [],
       currentFeedbackType: '',
       pagination: {
@@ -85,10 +89,67 @@ export default {
 
     onMounted(() => {
       fetchFeedbacks()
+      window.addEventListener('scroll', handleScroll, false)
     })
 
+    onUnmounted(() => {
+      window.addEventListener('scroll', handleScroll, false)
+    })
+
+    async function changeFeedbacksType (type) {
+      try {
+        state.isLoadingFeedbacks = true
+        state.paginaton.offset = 0
+        state.pagination.limit = 5
+        state.currentFeedbackType = type
+
+        const { data } = await services.feedbacks.getAll({
+          type,
+          ...state.pagination
+        })
+
+        state.feedbacks = data.results
+        state.paginaton = data.pagination
+        state.isLoadingFeedbacks = false
+      } catch (error) {
+        handleErrors(error)
+      }
+    }
+
     function handleErrors (error) {
+      state.isLoading = false
+      state.isLoadingFeedbacks = false
+      state.isLoadingMoreFeedback = false
       state.hasError = !!error
+    }
+
+    async function handleScroll () {
+      const isBottomOfWindow = Math.ceil(
+        document.documentElement.scrollTop + window.innerHeight
+      ) >= document.documentElement.scrollHeight
+
+      if (state.isLoading || state.isLoadingMoreFeedback) return
+      if (!isBottomOfWindow) return
+      if (state.feedbacks.length > state.pagination.total) return
+
+      try {
+        state.isLoadingMoreFeedback = true
+        const { data } = await services.feedbacks.getAll({
+          ...state.pagination,
+          type: state.currentFeedbackType,
+          offset: (state.pagination.offset + 5)
+        })
+
+        if (data.results.length) {
+          state.feedbacks.push(...data.results)
+        }
+
+        state.isLoadingMoreFeedback = false
+        state.pagination = data.pagination
+      } catch (error) {
+        state.isLoadingMoreFeedback = false
+        handleErrors(error)
+      }
     }
 
     async function fetchFeedbacks () {
@@ -113,7 +174,8 @@ export default {
     return {
       state,
       handleErrors,
-      fetchFeedbacks
+      fetchFeedbacks,
+      changeFeedbacksType
     }
   }
 }
