@@ -36,13 +36,13 @@
           Aconteceu um erro ao carregar os feedbacks😓
         </p>
         <p
-          v-if="!state.feedbacks.length && !state.isLoading"
+          v-if="!state.feedbacks.length && !state.isLoading && !state.isLoadingFeedbacks && !state.hasError"
           class="text-lg text-center text-gray-800 front-regular"
         >
           Ainda nenhum feedbacks recebido🤓
         </p>
 
-        <feedback-card-loading v-if="state.isLoading || isLoadingFeedbacks"/>
+        <feedback-card-loading v-if="state.isLoadingMoreFeedbacks"/>
         <feedback-card
           v-else
           v-for="(feedback, index) in state.feedbacks"
@@ -56,7 +56,7 @@
   </div>
 </template>
 <script>
-import { onMounted, onUnmounted, reactive } from 'vue'
+import { onErrorCaptured, onMounted, onUnmounted, reactive } from 'vue'
 import HeaderLogged from '../../components/HeaderLogged'
 import Filters from './Filters'
 import FiltersLoading from './FiltersLoading'
@@ -77,15 +77,18 @@ export default {
     const state = reactive({
       isLoadingFeedbacks: false,
       isLoading: false,
-      isLoadingMoreFeedback: false,
+      isLoadingMoreFeedbacks: false,
       feedbacks: [],
       currentFeedbackType: '',
       pagination: {
         limit: 5,
-        offset: 0
+        offset: 0,
+        total: 0
       },
       hasError: false
     })
+
+    onErrorCaptured(handleErrors)
 
     onMounted(() => {
       fetchFeedbacks()
@@ -119,7 +122,7 @@ export default {
     function handleErrors (error) {
       state.isLoading = false
       state.isLoadingFeedbacks = false
-      state.isLoadingMoreFeedback = false
+      state.isLoadingMoreFeedbacks = false
       state.hasError = !!error
     }
 
@@ -128,12 +131,12 @@ export default {
         document.documentElement.scrollTop + window.innerHeight
       ) >= document.documentElement.scrollHeight
 
-      if (state.isLoading || state.isLoadingMoreFeedback) return
+      if (state.isLoading || state.isLoadingMoreFeedbacks) return
       if (!isBottomOfWindow) return
       if (state.feedbacks.length > state.pagination.total) return
 
       try {
-        state.isLoadingMoreFeedback = true
+        state.isLoadingMoreFeedbacks = true
         const { data } = await services.feedbacks.getAll({
           ...state.pagination,
           type: state.currentFeedbackType,
@@ -144,10 +147,10 @@ export default {
           state.feedbacks.push(...data.results)
         }
 
-        state.isLoadingMoreFeedback = false
+        state.isLoadingMoreFeedbacks = false
         state.pagination = data.pagination
       } catch (error) {
-        state.isLoadingMoreFeedback = false
+        state.isLoadingMoreFeedbacks = false
         handleErrors(error)
       }
     }
