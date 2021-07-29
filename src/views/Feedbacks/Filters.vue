@@ -14,7 +14,7 @@
         @click="() => handleSelect(filter)"
         class="flex items-center justify-between px-4 py-1 rounded cursor-pointer"
       >
-        <div class="flext items-center">
+        <div class="flex items-center">
           <span
             :class="`bg-${filter.color}`"
             class="inline-block w-2 h-2 mr-2 rounded-full"
@@ -91,7 +91,7 @@ export default {
         return
       }
 
-      state.filters.map(filter => {
+      state.filters.map((filter) => {
         if (filter.type === type) {
           return { ...filter, active: true }
         }
