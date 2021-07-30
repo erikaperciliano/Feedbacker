@@ -16,10 +16,10 @@ describe('AuthService', () => {
 
     const response = await AuthService(mockAxios).login({ email: 'erika@erika.me', password: '123'})
     expect(response.data).toHaveProperty('token')
-    expect(response.data).toMatchSnapshot()
+    expect(response).toMatchSnapshot()
   })
 
-  it('should return an user when user register', () => {
+  it('should return an user when user register', async () => {
     const user = {
       name: 'Erika',
       password: '123',
@@ -34,5 +34,16 @@ describe('AuthService', () => {
     expect(response.data).toHaveProperty('password')
     expect(response.data).toHaveProperty('email')
     expect(response).toMatchSnapshot()
+  })
+
+  it('should throw an error when not found', async () => {
+    const errors = { status: 404, statusText: 'Not found'}
+    mockAxios.post.mockImplementationOnce(() => {
+      return Promise.resolve({ request: errors })
+    })
+
+    const response = await AuthService(mockAxios).login({ email: 'erika@erika.me', password: '123'})
+    expect(response.errors).toHaveProperty('status')
+    expect(response.errors).toHaveProperty('statusText')
   })
 })
