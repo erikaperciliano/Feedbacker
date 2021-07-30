@@ -21,7 +21,7 @@ describe('Validators utils', () => {
   })
 
   it('should give an error with a invalid param', () => {
-    expect(validateEmptyAndEmail('myemail@')).toBe('*Este campo precisa ser um e-mail válido!')
+    expect(validateEmptyAndEmail('myemail@gmail.com')).toBe('*Este campo precisa ser um e-mail válido!')
   })
 
   it('should returns true when a correct param', () => {
