@@ -13,6 +13,7 @@ describe('<Home/>', () => {
   it('should render home correctly', async () => {
     router.push('/')
     await router.isReady()
+
     const wrapper = shallowMount(Home, {
       global: {
         plugins: [router]
