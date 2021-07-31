@@ -1,6 +1,9 @@
 <template>
   <div class="flex justify-between">
-    <h1 class="text-4xl font-black text-gray-800">
+    <h1
+      class="text-4xl font-black text-gray-800"
+      id="modal-create-account"
+    >
       Crie uma conta
     </h1>
     <button
