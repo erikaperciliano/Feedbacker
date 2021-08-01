@@ -8,11 +8,11 @@
 
         <div class="flex">
           <button
-            id="cta-create-account-button"
+            id="header-create-account-button"
             @click="() => emit('create-account')"
             class="px-6 py-2 font-bold rounded-full text-white focus:outline-none"
           >
-            Crie uma conta grátis
+            Crie uma conta
           </button>
           <button
             id="header-login-button"
